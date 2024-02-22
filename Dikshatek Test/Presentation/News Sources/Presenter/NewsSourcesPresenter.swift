@@ -8,10 +8,11 @@
 import Foundation
 import RxSwift
 import RxRelay
+import UIKit
 
 protocol NewsSourcesPresenterInput {
     func getNewsSources()
-    func goToArticlesPage(selectedIndex: Int)
+    func goToArticlesPage(origin: UIViewController, selectedIndex: Int)
 }
 
 protocol NewsSourcesPresenterOutput {
@@ -51,7 +52,13 @@ final class DefaultNewsSourcesPresenter: NewsSourcesPresenter {
             }.disposed(by: disposeBag)
     }
     
-    func goToArticlesPage(selectedIndex: Int) {
+    func goToArticlesPage(origin: UIViewController, selectedIndex: Int) {
+        let selectedSource = self.sourcesStream.value[selectedIndex].name
         
+        self.router.goToArticlesPage(origin: origin)
+    }
+    
+    private func saveSelectedSource(selectedSource: String) {
+        NewsFilterHelper.setSource(source: selectedSource)
     }
 }

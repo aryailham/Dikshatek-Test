@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 protocol GetNewsUseCase {
-    func execute() -> Observable<NewsResult>
+    func execute(page: Int, source: String) -> Observable<NewsResult>
 }
 
 final class DefaultGetNewsUseCase: GetNewsUseCase {
@@ -18,8 +18,8 @@ final class DefaultGetNewsUseCase: GetNewsUseCase {
         self.newsRepository = newsRepository
     }
     
-    func execute() -> Observable<NewsResult> {
-        return newsRepository.getNews()
+    func execute(page: Int, source: String) -> Observable<NewsResult> {
+        return newsRepository.getNews(page: page, source: source)
     }
 }
 

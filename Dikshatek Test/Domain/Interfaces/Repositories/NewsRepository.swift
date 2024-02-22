@@ -10,5 +10,5 @@ import RxSwift
 
 protocol NewsRepository {
     func getNewsSources(category: String?) -> Observable<NewsSourceResult>
-    func getNews() -> Observable<NewsResult>
+    func getNews(page: Int, source: String) -> Observable<NewsResult>
 }
