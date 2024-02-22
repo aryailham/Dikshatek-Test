@@ -9,6 +9,7 @@ import Alamofire
 import RxSwift
 
 protocol NewsRemoteDataSource {
+    
     func getNews() -> Observable<NewsResponseDTO>
 }
 

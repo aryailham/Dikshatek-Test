@@ -24,4 +24,4 @@ final class DefaultGetNewsUseCase: GetNewsUseCase {
         return newsRepository.getNews()
     }
 }
-s
+
