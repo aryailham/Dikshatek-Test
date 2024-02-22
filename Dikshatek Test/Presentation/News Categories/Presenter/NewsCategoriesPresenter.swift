@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 protocol NewsCategoriesPresenterInput {
-    func goToNewsSourcesPage(selectedIndex: Int)
+    func goToNewsSourcesPage(origin: UIViewController, selectedIndex: Int)
 }
 
 protocol NewsCategoriesPresenterOutput {
@@ -35,14 +36,14 @@ final class DefaultNewsCategoriesPresenter: NewsCategoriesPresenter {
         self.router = router
     }
 
-    func goToNewsSourcesPage(selectedIndex: Int) {
+    func goToNewsSourcesPage(origin: UIViewController, selectedIndex: Int) {
         let selectedCategories = String(describing: categories[selectedIndex])
         saveSelectedSource(selectedCategories: selectedCategories)
         
-        router.goToNewsSourcesPage()
+        router.goToNewsSourcesPage(origin: origin)
     }
     
     private func saveSelectedSource(selectedCategories: String) {
-        UserDefaults.standard.setValue(selectedCategories, forKey: "selectedCategories")
+        NewsFilterHelper.setCategory(category: selectedCategories)
     }
 }

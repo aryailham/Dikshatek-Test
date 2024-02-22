@@ -9,7 +9,7 @@ import Alamofire
 import RxSwift
 
 protocol NewsRemoteDataSource {
-    
+    func getNewsSources(category: String?) -> Observable<NewsSourceResultResponseDTO>
     func getNews() -> Observable<NewsResponseDTO>
 }
 
@@ -20,6 +20,39 @@ enum FetchError: String, Error {
 
 final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
     let GET_NEWS = "https://newsapi.org/v2/top-headlines?country=id&apiKey=%@"
+    let GET_NEWS_CATEGORIES = "https://newsapi.org/v2/top-headlines/sources"
+    
+    func getNewsSources(category: String? = nil) -> Observable<NewsSourceResultResponseDTO> {
+        guard let infoDict = Bundle.main.infoDictionary, let apiKey = infoDict["API_KEY"] as? String else {
+            return Observable.error(FetchError.APIKeyFailed)
+        }
+        
+        let urlString = self.GET_NEWS_CATEGORIES
+        guard let url = URL(string: urlString) else {
+            return Observable.error(FetchError.URLFailed)
+        }
+        
+        var parameters: Parameters = [
+            "apiKey": apiKey
+        ]
+        if let category = category {
+            parameters["category"] = category
+        }
+        
+        return Observable.create { observer in
+            AF.request(url, method: .get, parameters: parameters)
+                .responseDecodable(of: NewsSourceResultResponseDTO.self) { response in
+                    switch response.result {
+                    case .success(let success):
+                        observer.onNext(success)
+                        observer.onCompleted()
+                    case .failure(let failure):
+                        observer.onError(failure)
+                    }
+                }
+            return Disposables.create()
+        }
+    }
     
     func getNews() -> Observable<NewsResponseDTO> {
         guard let infoDict = Bundle.main.infoDictionary, let apiKey = infoDict["API_KEY"] as? String else {
