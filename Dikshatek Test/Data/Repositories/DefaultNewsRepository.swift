@@ -17,6 +17,12 @@ final class DefaultNewsRepository: NewsRepository {
         self.remote = remote
     }
     
+    func getNewsSources(category: String?) -> Observable<NewsSourceResult> {
+        return remote.getNewsSources(category: category).map { source in
+            return source.mapToDomain()
+        }
+    }
+    
     func getNews() -> Observable<NewsResult> {
         return remote.getNews().map { newsResponseDTO in
             return newsResponseDTO.mapToDomain()

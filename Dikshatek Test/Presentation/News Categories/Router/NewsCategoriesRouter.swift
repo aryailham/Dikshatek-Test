@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class NewsCategoriesRouter {
     static func createModule() -> NewsCategoriesViewController {
@@ -21,7 +22,8 @@ final class NewsCategoriesRouter {
         return controller
     }
     
-    func goToNewsSourcesPage() {
-        // TODO: - implement this later
+    func goToNewsSourcesPage(origin: UIViewController) {
+        let destination = NewsSourcesRouter.createModule()
+        origin.navigationController?.pushViewController(destination, animated: true)
     }
 }
