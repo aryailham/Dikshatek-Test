@@ -46,16 +46,6 @@ class ArticlesViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(ArticleTableViewCell.nib, forCellReuseIdentifier: ArticleTableViewCell.ID)
     }
-    
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        let offsetY = scrollView.contentOffset.y
-//        let contentHeight = scrollView.contentSize.height
-//
-//        if offsetY > contentHeight - scrollView.frame.height {
-//            presenter.fetchNextPage()
-//        }
-//    }
-
 }
 
 extension ArticlesViewController: UITableViewDelegate, UITableViewDataSource {
