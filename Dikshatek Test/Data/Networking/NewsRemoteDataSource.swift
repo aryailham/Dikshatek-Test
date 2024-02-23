@@ -47,7 +47,14 @@ final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
                         observer.onNext(success)
                         observer.onCompleted()
                     case .failure(let failure):
-                        observer.onError(failure)
+                        if let data = response.data {
+                            do {
+                                let errorResponse = try JSONDecoder().decode(ErrorMessage.self, from: data)
+                                observer.onError(errorResponse)
+                            } catch {
+                                print("Unable to decode error response: \(error)")
+                            }
+                        }
                     }
                 }
             return Disposables.create()
@@ -64,7 +71,7 @@ final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
             return Observable.error(FetchError.URLFailed)
         }
         
-        var parameters: Parameters = [
+        let parameters: Parameters = [
             "apiKey": apiKey,
             "page": page,
             "sources": source
@@ -78,7 +85,14 @@ final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
                         observer.onNext(success)
                         observer.onCompleted()
                     case .failure(let failure):
-                        observer.onError(failure)
+                        if let data = response.data {
+                            do {
+                                let errorResponse = try JSONDecoder().decode(ErrorMessage.self, from: data)
+                                observer.onError(errorResponse)
+                            } catch {
+                                print("Unable to decode error response: \(error)")
+                            }
+                        }
                     }
                 }
             return Disposables.create()

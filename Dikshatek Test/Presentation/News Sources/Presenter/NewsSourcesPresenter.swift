@@ -17,6 +17,7 @@ protocol NewsSourcesPresenterInput {
 
 protocol NewsSourcesPresenterOutput {
     var sources: Observable<[NewsSource]> { get }
+    var errorMessage: Observable<String> { get }
 }
 
 typealias NewsSourcesPresenter = NewsSourcesPresenterInput & NewsSourcesPresenterOutput
@@ -29,6 +30,13 @@ final class DefaultNewsSourcesPresenter: NewsSourcesPresenter {
     var sources: Observable<[NewsSource]> {
         get {
             return sourcesStream.asObservable()
+        }
+    }
+    
+    let errorMessageStream = PublishSubject<String>()
+    var errorMessage: Observable<String> {
+        get {
+            return errorMessageStream.asObservable()
         }
     }
     
@@ -47,14 +55,16 @@ final class DefaultNewsSourcesPresenter: NewsSourcesPresenter {
         self.getNewsSourceUseCase.execute(category: savedCategory != "all" ? savedCategory : nil)
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .observe(on: MainScheduler.instance)
-            .subscribe { newsSourceResult in
+            .subscribe(onNext: { newsSourceResult in
                 self.sourcesStream.accept(newsSourceResult.sources)
-            }.disposed(by: disposeBag)
+            }, onError: { error in
+                self.errorMessageStream.onNext(error.getErrorMessageObject().message)
+            }).disposed(by: disposeBag)
     }
     
     func goToArticlesPage(origin: UIViewController, selectedIndex: Int) {
         let selectedSource = self.sourcesStream.value[selectedIndex].name
-        
+        saveSelectedSource(selectedSource: selectedSource)
         self.router.goToArticlesPage(origin: origin)
     }
     

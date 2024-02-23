@@ -18,6 +18,7 @@ protocol ArticlesPresenterInput {
 
 protocol ArticlesPresenterOutput {
     var articles: Observable<[Article]> { get }
+    var errorMessage: Observable<String> { get }
     func getArticlesData() -> [Article]
 }
 
@@ -30,6 +31,13 @@ final class DefaultArticlesPresenter: ArticlesPresenter {
     let articlesStream = BehaviorRelay<[Article]>(value: [])
     var articles: Observable<[Article]> {
         return articlesStream.asObservable()
+    }
+    
+    let errorMessageStream = PublishSubject<String>()
+    var errorMessage: Observable<String> {
+        get {
+            return errorMessageStream.asObservable()
+        }
     }
     
     private var currentPage = 1
@@ -53,7 +61,7 @@ final class DefaultArticlesPresenter: ArticlesPresenter {
             .subscribe { newsResult in
                 self.articlesStream.accept(newsResult.articles)
             } onError: { error in
-                // TODO: Handle error
+                self.errorMessageStream.onNext(error.getErrorMessageObject().message)
             }.disposed(by: disposeBag)
     }
     

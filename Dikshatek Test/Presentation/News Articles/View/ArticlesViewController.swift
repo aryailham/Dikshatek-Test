@@ -25,27 +25,17 @@ class ArticlesViewController: UIViewController {
     }
     
     private func bind() {
+        self.presenter.errorMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe { errorMessage in
+                self.showAlert(title: "Error", message: errorMessage)
+            }.disposed(by: disposeBag)
+
         self.presenter.articles
             .subscribe(on: MainScheduler.instance)
-            .subscribe { _ in
-//                self.dataToRender.append(contentsOf: articleToRender)
-                
-                // count new row insertion
-                let articles = self.presenter.getArticlesData()
-                var indexPaths = [IndexPath]()
-                let startIndex = self.dataToRender.count
-                let numOfNewData = articles.count
-                
-                guard numOfNewData > 0 else { return }
-                
-                for i in 1...numOfNewData {
-                    self.dataToRender.append(articles[i])
-                    indexPaths.append(IndexPath(row: startIndex + i - 1, section: 0))
-                }
-
-                self.tableView.beginUpdates()
-                self.tableView.insertRows(at: indexPaths, with: .left)
-                self.tableView.endUpdates()
+            .subscribe { articleToRender in
+                self.dataToRender.append(contentsOf: articleToRender)
+                self.tableView.reloadData()
             }.disposed(by: disposeBag)
     }
     
@@ -57,14 +47,14 @@ class ArticlesViewController: UIViewController {
         tableView.register(ArticleTableViewCell.nib, forCellReuseIdentifier: ArticleTableViewCell.ID)
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-
-        if offsetY > contentHeight - scrollView.frame.height {
-            presenter.fetchNextPage()
-        }
-    }
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        let offsetY = scrollView.contentOffset.y
+//        let contentHeight = scrollView.contentSize.height
+//
+//        if offsetY > contentHeight - scrollView.frame.height {
+//            presenter.fetchNextPage()
+//        }
+//    }
 
 }
 
