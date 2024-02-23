@@ -64,7 +64,7 @@ final class DefaultNewsSourcesPresenter: NewsSourcesPresenter {
     
     func goToArticlesPage(origin: UIViewController, selectedIndex: Int) {
         let selectedSource = self.sourcesStream.value[selectedIndex].name
-        
+        saveSelectedSource(selectedSource: selectedSource)
         self.router.goToArticlesPage(origin: origin)
     }
     
