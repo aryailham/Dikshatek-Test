@@ -33,25 +33,25 @@ class ArticlesViewController: UIViewController {
 
         self.presenter.articles
             .subscribe(on: MainScheduler.instance)
-            .subscribe { _ in
-//                self.dataToRender.append(contentsOf: articleToRender)
+            .subscribe { articleToRender in
+                self.dataToRender.append(contentsOf: articleToRender)
                 
-                // count new row insertion
-                let articles = self.presenter.getArticlesData()
-                var indexPaths = [IndexPath]()
-                let startIndex = self.dataToRender.count
-                let numOfNewData = articles.count
-                
-                guard numOfNewData > 0 else { return }
-                
-                for i in 1...numOfNewData {
-                    self.dataToRender.append(articles[i])
-                    indexPaths.append(IndexPath(row: startIndex + i - 1, section: 0))
-                }
-
-                self.tableView.beginUpdates()
-                self.tableView.insertRows(at: indexPaths, with: .left)
-                self.tableView.endUpdates()
+//                // count new row insertion
+//                let articles = self.presenter.getArticlesData()
+//                var indexPaths = [IndexPath]()
+//                let startIndex = self.dataToRender.count
+//                let numOfNewData = articles.count
+//                
+//                guard numOfNewData > 0 else { return }
+//                
+//                for i in 1...numOfNewData {
+//                    self.dataToRender.append(articles[i])
+//                    indexPaths.append(IndexPath(row: startIndex + i - 1, section: 0))
+//                }
+//
+//                self.tableView.beginUpdates()
+//                self.tableView.insertRows(at: indexPaths, with: .left)
+//                self.tableView.endUpdates()
             }.disposed(by: disposeBag)
     }
     
