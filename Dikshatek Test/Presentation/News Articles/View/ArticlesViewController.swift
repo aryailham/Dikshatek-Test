@@ -25,6 +25,12 @@ class ArticlesViewController: UIViewController {
     }
     
     private func bind() {
+        self.presenter.errorMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe { errorMessage in
+                self.showAlert(title: "Error", message: errorMessage)
+            }.disposed(by: disposeBag)
+
         self.presenter.articles
             .subscribe(on: MainScheduler.instance)
             .subscribe { _ in

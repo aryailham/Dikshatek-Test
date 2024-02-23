@@ -32,6 +32,12 @@ class NewsSourcesViewController: UIViewController {
                 self.dataToRender = sources
                 self.tableView.reloadData()
             }.disposed(by: disposeBag)
+        
+        self.presenter.errorMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe { errorMessage in
+                self.showAlert(title: "Error", message: errorMessage)
+            }.disposed(by: disposeBag)
     }
     
     private func setupView() {
