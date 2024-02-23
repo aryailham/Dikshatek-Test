@@ -31,6 +31,7 @@ final class NewsSourcesRouter {
     }
     
     func goToArticlesPage(origin: UIViewController) {
-        
+        let controller = ArticlesRouter.createModule()
+        origin.navigationController?.pushViewController(controller, animated: true)
     }
 }

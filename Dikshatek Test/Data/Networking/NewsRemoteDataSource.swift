@@ -10,7 +10,7 @@ import RxSwift
 
 protocol NewsRemoteDataSource {
     func getNewsSources(category: String?) -> Observable<NewsSourceResultResponseDTO>
-    func getNews() -> Observable<NewsResponseDTO>
+    func getNews(page: Int, source: String) -> Observable<NewsResponseDTO>
 }
 
 enum FetchError: String, Error {
@@ -19,7 +19,7 @@ enum FetchError: String, Error {
 }
 
 final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
-    let GET_NEWS = "https://newsapi.org/v2/top-headlines?country=id&apiKey=%@"
+    let GET_NEWS = "https://newsapi.org/v2/top-headlines"
     let GET_NEWS_CATEGORIES = "https://newsapi.org/v2/top-headlines/sources"
     
     func getNewsSources(category: String? = nil) -> Observable<NewsSourceResultResponseDTO> {
@@ -54,7 +54,7 @@ final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
         }
     }
     
-    func getNews() -> Observable<NewsResponseDTO> {
+    func getNews(page: Int, source: String) -> Observable<NewsResponseDTO> {
         guard let infoDict = Bundle.main.infoDictionary, let apiKey = infoDict["API_KEY"] as? String else {
             return Observable.error(FetchError.APIKeyFailed)
         }
@@ -63,9 +63,15 @@ final class DefaultNewsRemoteDataSource: NewsRemoteDataSource {
         guard let url = URL(string: urlString) else {
             return Observable.error(FetchError.URLFailed)
         }
+        
+        var parameters: Parameters = [
+            "apiKey": apiKey,
+            "page": page,
+            "sources": source
+        ]
 
         return Observable.create { observer in
-            AF.request(url, method: .get)
+            AF.request(url, method: .get, parameters: parameters)
                 .responseDecodable(of: NewsResponseDTO.self) { response in
                     switch response.result {
                     case .success(let success):

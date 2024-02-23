@@ -23,8 +23,8 @@ final class DefaultNewsRepository: NewsRepository {
         }
     }
     
-    func getNews() -> Observable<NewsResult> {
-        return remote.getNews().map { newsResponseDTO in
+    func getNews(page: Int, source: String) -> Observable<NewsResult> {
+        return remote.getNews(page: page, source: source).map { newsResponseDTO in
             return newsResponseDTO.mapToDomain()
         }
     }
